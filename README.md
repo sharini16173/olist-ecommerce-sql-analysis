@@ -16,78 +16,20 @@ An end-to-end relational database project analyzing 100,000+ Brazilian e-commerc
 
 ## Entity-Relationship (ER) Diagram
 
-erDiagram
-    CUSTOMERS ||--o{ ORDERS : "places (customer_id)"
-    ORDERS ||--o{ ORDER_PAYMENTS : "paid via (order_id)"
-    ORDERS ||--o{ ORDER_REVIEWS : "reviewed in (order_id)"
-    ORDERS ||--|{ ORDER_ITEMS : "contains (order_id)"
-    SELLERS ||--o{ ORDER_ITEMS : "fulfills (seller_id)"
-    PRODUCTS ||--o{ ORDER_ITEMS : "ordered as (product_id)"
-    PRODUCT_CATEGORY_TRANSLATION ||--o{ PRODUCTS : "translates (category_name)"
-
-    CUSTOMERS {
-        string customer_id PK
-        string customer_unique_id
-        string customer_city
-        string customer_state
-    }
-
-    ORDERS {
-        string order_id PK
-        string customer_id FK
-        string order_status
-        datetime order_purchase_timestamp
-        datetime order_delivered_customer_date
-        datetime order_estimated_delivery_date
-    }
-
-    ORDER_ITEMS {
-        string order_id PK,FK
-        int order_item_id PK
-        string product_id FK
-        string seller_id FK
-        datetime shipping_limit_date
-        float price
-        float freight_value
-    }
-
-    ORDER_PAYMENTS {
-        string order_id FK
-        int payment_sequential
-        string payment_type
-        int payment_installments
-        float payment_value
-    }
-
-    ORDER_REVIEWS {
-        string review_id PK
-        string order_id FK
-        int review_score
-        datetime review_creation_date
-        datetime review_answer_timestamp
-    }
-
-    PRODUCTS {
-        string product_id PK
-        string product_category_name FK
-        int product_photos_qty
-        float product_weight_g
-        float product_length_cm
-        float product_height_cm
-        float product_width_cm
-    }
-
-    SELLERS {
-        string seller_id PK
-        string seller_city
-        string seller_state
-    }
-
-    PRODUCT_CATEGORY_TRANSLATION {
-        string product_category_name PK
-        string product_category_name_english
-    }
-
+[customers] (customer_id, customer_unique_id, customer_city, customer_state)
+            │
+            ▼ (customer_id)
+         [orders] (order_id, customer_id, order_status, order_purchase_timestamp, order_delivered_customer_date)
+            ├───► [order_payments] (order_id, payment_type, payment_value)
+            ├───► [order_reviews]  (order_id, review_score)
+            │
+            ▼ (order_id)
+       [order_items] (order_id, product_id, seller_id, shipping_limit_date, price, freight_value)
+            ├───► [sellers]  (seller_id, seller_city, seller_state)
+            │
+            ▼ (product_id)
+       [products] ───► [product_category_name_translation]
+       
 ---
 
 ### Relational Model & Key Mapping
