@@ -1,8 +1,6 @@
 # Brazilian E-Commerce (Olist) Marketplace & Customer Behavior Analysis
 
-[![SQL-SQLite](https://img.shields.io/badge/Dialect-SQLite-blue.svg)](https://www.sqlite.org/)
-[![Dataset-Olist](https://img.shields.io/badge/Dataset-Kaggle_Olist-green.svg)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
-[![Queries-15](https://img.shields.io/badge/Business_Queries-15_Intermediate/Advanced-orange.svg)](#query-catalog--technical-breakdown)
+**Dialect:** SQLite | **Dataset:** Brazilian E-Commerce Public Dataset by Olist (100k+ orders) | **Scope:** 15 Business SQL Queries
 
 An intermediate-to-advanced relational database analysis investigating commercial performance, customer lifetime behavior, logistics bottlenecks, and merchant tiering across 100,000+ real-world Brazilian e-commerce transactions from 2016 to 2018.
 
@@ -17,23 +15,23 @@ An intermediate-to-advanced relational database analysis investigating commercia
 
 ---
 
-## Database Architecture & Entity Relationships
+## Database Schema (How Tables Connect)
 
-The schema consists of 9 normalized tables structured around customer profiles, commercial order cycles, merchant listings, delivery timestamps, payment methods, and product categories.
+The dataset contains 9 relational tables centered around the `orders` fact table.
 
-   [customers] (customer_id, customer_unique_id, customer_city, customer_state)
-        │
-        ▼ (customer_id)
-     [orders] (order_id, customer_id, order_status, order_purchase_timestamp, order_delivered_customer_date)
-        ├───► [order_payments] (order_id, payment_type, payment_value)
-        ├───► [order_reviews]  (order_id, review_score)
-        │
-        ▼ (order_id)
-   [order_items] (order_id, product_id, seller_id, shipping_limit_date, price, freight_value)
-        ├───► [sellers]  (seller_id, seller_city, seller_state)
-        │
-        ▼ (product_id)
-   [products] ───► [product_category_name_translation]
+| Primary Table | Connects To | Join Key (Column) | Relationship Purpose |
+|---|---|---|---|
+| **orders** | **customers** | `customer_id` | Identifies which customer placed the order |
+| **orders** | **order_payments** | `order_id` | Shows payment type, installments, and transaction value |
+| **orders** | **order_reviews** | `order_id` | Contains star ratings (1–5) and review feedback |
+| **orders** | **order_items** | `order_id` | Lists all products inside the order |
+| **order_items** | **products** | `product_id` | Retrieves product category and physical dimensions |
+| **order_items** | **sellers** | `seller_id` | Links each item to its merchant and location |
+| **products** | **product_category_name_translation** | `product_category_name` | Translates Portuguese category names to English |
+
+### Key ID Difference (Important Interview Concept)
+* **`customer_id`**: A unique ID generated for each single order transaction.
+* **`customer_unique_id`**: The permanent ID identifying the actual human buyer across multiple visits (used for repeat customer and retention queries).
 
 ---
 
