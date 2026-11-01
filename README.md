@@ -16,6 +16,7 @@ An end-to-end relational database project analyzing 100,000+ Brazilian e-commerc
 
 ## Entity-Relationship (ER) Diagram
 
+```markdown
 ```mermaid
 erDiagram
     CUSTOMERS ||--o{ ORDERS : "places"
