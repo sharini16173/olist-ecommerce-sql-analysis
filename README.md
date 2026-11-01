@@ -16,20 +16,66 @@ An end-to-end relational database project analyzing 100,000+ Brazilian e-commerc
 
 ## Entity-Relationship (ER) Diagram
 
-[customers] (customer_id, customer_unique_id, customer_city, customer_state)
-            │
-            ▼ (customer_id)
-         [orders] (order_id, customer_id, order_status, order_purchase_timestamp, order_delivered_customer_date)
-            ├───► [order_payments] (order_id, payment_type, payment_value)
-            ├───► [order_reviews]  (order_id, review_score)
-            │
-            ▼ (order_id)
-       [order_items] (order_id, product_id, seller_id, shipping_limit_date, price, freight_value)
-            ├───► [sellers]  (seller_id, seller_city, seller_state)
-            │
-            ▼ (product_id)
-       [products] ───► [product_category_name_translation]
-       
+erDiagram
+    CUSTOMERS ||--o{ ORDERS : "places"
+    ORDERS ||--o{ ORDER_PAYMENTS : "pays"
+    ORDERS ||--o{ ORDER_REVIEWS : "rates"
+    ORDERS ||--|{ ORDER_ITEMS : "contains"
+    SELLERS ||--o{ ORDER_ITEMS : "fulfills"
+    PRODUCTS ||--o{ ORDER_ITEMS : "includes"
+    CATEGORY_TRANSLATION ||--o{ PRODUCTS : "translates"
+
+    CUSTOMERS {
+        string customer_id PK
+        string customer_unique_id
+        string customer_state
+    }
+
+    ORDERS {
+        string order_id PK
+        string customer_id FK
+        string order_status
+        string order_purchase_timestamp
+        string order_delivered_customer_date
+    }
+
+    ORDER_ITEMS {
+        string order_id PK,FK
+        int order_item_id PK
+        string product_id FK
+        string seller_id FK
+        float price
+        float freight_value
+    }
+
+    ORDER_PAYMENTS {
+        string order_id FK
+        string payment_type
+        float payment_value
+    }
+
+    ORDER_REVIEWS {
+        string review_id PK
+        string order_id FK
+        int review_score
+    }
+
+    PRODUCTS {
+        string product_id PK
+        string product_category_name FK
+        float product_weight_g
+    }
+
+    SELLERS {
+        string seller_id PK
+        string seller_state
+    }
+
+    CATEGORY_TRANSLATION {
+        string product_category_name PK
+        string product_category_name_english
+    }
+    
 ---
 
 ### Relational Model & Key Mapping
