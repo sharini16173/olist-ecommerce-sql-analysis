@@ -40,7 +40,7 @@ erDiagram
     }
 
     ORDER_ITEMS {
-        string order_id PK,FK
+        string order_id PK
         int order_item_id PK
         string product_id FK
         string seller_id FK
