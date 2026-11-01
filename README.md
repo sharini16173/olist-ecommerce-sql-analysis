@@ -16,6 +16,7 @@ An end-to-end relational database project analyzing 100,000+ Brazilian e-commerc
 
 ## Entity-Relationship (ER) Diagram
 
+```mermaid
 erDiagram
     CUSTOMERS ||--o{ ORDERS : "places"
     ORDERS ||--o{ ORDER_PAYMENTS : "pays"
@@ -75,7 +76,7 @@ erDiagram
         string product_category_name PK
         string product_category_name_english
     }
-    
+
 ---
 
 ### Relational Model & Key Mapping
