@@ -15,24 +15,24 @@ An intermediate-to-advanced relational database analysis investigating commercia
 
 ---
 
-## Database Architecture & Entity Relationships
+## Database Schema Overview
 
 The schema consists of 9 normalized tables structured around customer profiles, commercial order cycles, merchant listings, delivery timestamps, payment methods, and product categories.
 
-   [customers] (customer_id, customer_unique_id, customer_city, customer_state)
-        │
-        ▼ (customer_id)
-     [orders] (order_id, customer_id, order_status, order_purchase_timestamp, order_delivered_customer_date)
-        ├───► [order_payments] (order_id, payment_type, payment_value)
-        ├───► [order_reviews]  (order_id, review_score)
-        │
-        ▼ (order_id)
-   [order_items] (order_id, product_id, seller_id, shipping_limit_date, price, freight_value)
-        ├───► [sellers]  (seller_id, seller_city, seller_state)
-        │
-        ▼ (product_id)
-   [products] ───► [product_category_name_translation]
-
+```text
+       [customers] (customer_id, customer_unique_id, customer_city, customer_state)
+            │
+            ▼ (customer_id)
+         [orders] (order_id, customer_id, order_status, order_purchase_timestamp, order_delivered_customer_date)
+            ├───► [order_payments] (order_id, payment_type, payment_value)
+            ├───► [order_reviews]  (order_id, review_score)
+            │
+            ▼ (order_id)
+       [order_items] (order_id, product_id, seller_id, shipping_limit_date, price, freight_value)
+            ├───► [sellers]  (seller_id, seller_city, seller_state)
+            │
+            ▼ (product_id)
+       [products] ───► [product_category_name_translation]
 ---
 
 ## Query Catalog & Technical Breakdown
