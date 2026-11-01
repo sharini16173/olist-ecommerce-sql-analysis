@@ -14,9 +14,8 @@ An end-to-end relational database project analyzing 100,000+ Brazilian e-commerc
 
 ---
 
-## Entity-Relationship (ER) Diagram
+## Entity-Relationship (ER) Diagram & Data Architecture
 
-```markdown
 ```mermaid
 erDiagram
     CUSTOMERS ||--o{ ORDERS : "places"
@@ -77,8 +76,7 @@ erDiagram
         string product_category_name PK
         string product_category_name_english
     }
-
----
+```
 
 ### Relational Model & Key Mapping
 
@@ -94,7 +92,7 @@ erDiagram
 
 ---
 
-## 5 Key Insights 
+## 5 Key Insights in Plain English
 
 1. **Delivery Delays Cut Customer Satisfaction in Half**  
    When orders arrive on or ahead of the promised delivery date, customers award an average rating of **4.29 out of 5 stars**. When shipments miss their delivery window, ratings collapse to **2.14 stars**, with 1-star reviews surging past 60%. Operational fulfillment speed is the single largest controllable driver of customer sentiment on the platform.
@@ -113,7 +111,7 @@ erDiagram
 
 ---
 
-## Query Catalog (15 Business Analysis)
+## Query Catalog (15 Business Analyses)
 
 All SQL scripts are stored in the [`sql_queries/`](sql_queries/) folder.
 
@@ -137,7 +135,7 @@ All SQL scripts are stored in the [`sql_queries/`](sql_queries/) folder.
 
 ---
 
-## Technical & Analytical Takeaways
+## What I Learned (Technical & Analytical Takeaways)
 
 1. **Table Grain & Data Modeling Realities:**  
    In relational databases, verifying table granularity before writing joins is non-negotiable. I learned how `order_items` operates at the item grain rather than the order grain, requiring pre-aggregation or distinct handling to avoid duplicate counts during billing calculations.
