@@ -1,82 +1,90 @@
-# Brazilian E-Commerce (Olist) Marketplace & Customer Behavior Analysis
+# Brazilian E-Commerce (Olist) SQL Data Analysis
 
-**Dialect:** SQLite | **Dataset:** Brazilian E-Commerce Public Dataset by Olist (100k+ orders) | **Scope:** 15 Business SQL Queries
+**Dialect:** SQLite | **Dataset:** [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) | **Scope:** 15 Business SQL Queries across 100k+ Transactions
 
-An intermediate-to-advanced relational database analysis investigating commercial performance, customer lifetime behavior, logistics bottlenecks, and merchant tiering across 100,000+ real-world Brazilian e-commerce transactions from 2016 to 2018.
-
----
-
-## Executive Summary & Key Business Takeaways
-
-* **Fulfillment Directly Drives Brand Loyalty & Sentiment:** On-time deliveries average a **4.29 / 5.0 customer satisfaction score**, whereas delayed orders plunge to **2.14 / 5.0**. Preventing logistics delays directly mitigates negative review volume by over 50%.
-* **The Retention Dilemma (<3% Repeat Purchase Rate):** Unique buyer tracking reveals that fewer than 3% of customers ever execute a second transaction. The business model is heavily acquisition-dependent; introducing post-purchase win-back campaigns and category bundles is critical to improving Customer Lifetime Value (LTV).
-* **Mid-Tier GMV Dominance:** Baskets between $50 and $200 account for over 60% of total Gross Merchandise Value (GMV), with credit cards handling over 75% of total payment volume.
-* **Freight Cost Friction on Large Goods:** High-bulk categories (e.g., furniture, heavy construction tools) carry freight-to-price ratios between **35% and 43%**, directly suppressing purchase conversion outside the Southeast macro-region (SP, RJ, MG).
+An end-to-end relational database project analyzing 100,000+ Brazilian e-commerce orders from 2016 to 2018 across 9 normalized tables. The analysis focuses on commercial revenue trajectories, marketplace unit economics, supply chain bottlenecks, and customer cohort retention.
 
 ---
 
-## Database Schema (How Tables Connect)
+## Dataset Reference
 
-The dataset contains 9 relational tables centered around the `orders` fact table.
-
-| Primary Table | Connects To | Join Key (Column) | Relationship Purpose |
-|---|---|---|---|
-| **orders** | **customers** | `customer_id` | Identifies which customer placed the order |
-| **orders** | **order_payments** | `order_id` | Shows payment type, installments, and transaction value |
-| **orders** | **order_reviews** | `order_id` | Contains star ratings (1–5) and review feedback |
-| **orders** | **order_items** | `order_id` | Lists all products inside the order |
-| **order_items** | **products** | `product_id` | Retrieves product category and physical dimensions |
-| **order_items** | **sellers** | `seller_id` | Links each item to its merchant and location |
-| **products** | **product_category_name_translation** | `product_category_name` | Translates Portuguese category names to English |
-
-### Key ID Difference (Important Interview Concept)
-* **`customer_id`**: A unique ID generated for each single order transaction.
-* **`customer_unique_id`**: The permanent ID identifying the actual human buyer across multiple visits (used for repeat customer and retention queries).
+* **Source:** [Kaggle — Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+* **Scope:** 100,000+ real anonymized commercial transactions processed between 2016 and 2018 across Brazilian states.
+* **Architecture:** 9 normalized relational tables covering customers, order cycles, line items, payments, reviews, products, sellers, geolocation, and category translations.
 
 ---
 
-## Query Catalog & Technical Breakdown
+## Entity-Relationship (ER) Diagram & Data Architecture
 
-All production SQL scripts are housed inside the [`sql_queries/`](sql_queries/) directory.
+```mermaid
+erDiagram
+    CUSTOMERS ||--o{ ORDERS : "places (1:N via customer_id)"
+    ORDERS ||--o{ ORDER_PAYMENTS : "split into (1:N via order_id)"
+    ORDERS ||--o{ ORDER_REVIEWS : "evaluated by (1:N via order_id)"
+    ORDERS ||--|{ ORDER_ITEMS : "contains (1:N via order_id)"
+    SELLERS ||--o{ ORDER_ITEMS : "fulfills (1:N via seller_id)"
+    PRODUCTS ||--o{ ORDER_ITEMS : "ordered as (1:N via product_id)"
+    PRODUCT_CATEGORY_TRANSLATION ||--o{ PRODUCTS : "translates (1:N via category_name)"
 
-| # | Query File | Business Objective | Core SQL Techniques |
-|---|---|---|---|
-| **01** | [`01_monthly_revenue.sql`](sql_queries/01_monthly_revenue.sql) | Track marketplace monthly gross merchandise trajectory | `strftime()`, `SUM()`, `GROUP BY`, `ORDER BY` |
-| **02** | [`02_top_10_categories.sql`](sql_queries/02_top_10_categories.sql) | Identify highest grossing product categories | Multi-table `INNER JOIN`, aggregate aliasing |
-| **03** | [`03_avg_delivery_time.sql`](sql_queries/03_avg_delivery_time.sql) | Evaluate delivery transit duration across states | `julianday()`, date difference calculations |
-| **04** | [`04_top_payment_methods.sql`](sql_queries/04_top_payment_methods.sql) | Evaluate checkout method preferences by volume & value | Percentage contribution math, conditional aggregation |
-| **05** | [`05_orders_by_state.sql`](sql_queries/05_orders_by_state.sql) | Map geographic customer concentration across regions | Multi-table joins, geographic segmentation |
-| **06** | [`06_repeat_customers.sql`](sql_queries/06_repeat_customers.sql) | Calculate platform-wide repeat purchase rate | Common Table Expression (CTE), `HAVING COUNT() > 1` |
-| **07** | [`07_seller_revenue_vs_avg.sql`](sql_queries/07_seller_revenue_vs_avg.sql) | Benchmark merchant gross sales against platform average | Multi-stage CTE, platform baseline aggregation |
-| **08** | [`08_running_monthly_revenue.sql`](sql_queries/08_running_monthly_revenue.sql) | Track cumulative lifetime marketplace GMV | Window Function: `SUM() OVER (ORDER BY month)` |
-| **09** | [`09_mom_revenue_growth.sql`](sql_queries/09_mom_revenue_growth.sql) | Measure month-over-month revenue velocity | Window Function: `LAG() OVER ()`, growth percentage math |
-| **10** | [`10_top_sellers_by_state.sql`](sql_queries/10_top_sellers_by_state.sql) | Identify highest-earning merchants partitioned by state | Window Function: `DENSE_RANK() OVER (PARTITION BY state)` |
-| **11** | [`11_top_3_products_per_category.sql`](sql_queries/11_top_3_products_per_category.sql) | Isolate top 3 volume-driving items per category | Window Function: `ROW_NUMBER() OVER (PARTITION BY category)` |
-| **12** | [`12_delivery_performance_vs_reviews.sql`](sql_queries/12_delivery_performance_vs_reviews.sql) | Quantify rating impact of delayed vs on-time fulfillment | `CASE WHEN`, date comparisons, `AVG(review_score)` |
-| **13** | [`13_freight_value_ratio.sql`](sql_queries/13_freight_value_ratio.sql) | Flag catalog categories suffering freight friction | Ratio derivation `(freight / price)`, sorting, `LIMIT 10` |
-| **14** | [`14_order_value_tiers.sql`](sql_queries/14_order_value_tiers.sql) | Segment basket totals into Low, Mid, and High brackets | Cart rollup CTE, categorical `CASE WHEN` bucketing |
-| **15** | [`15_customer_retention_cohort.sql`](sql_queries/15_customer_retention_cohort.sql) | Cohort tracking of first purchase vs re-engagement | Multi-CTE cohort indexation, `MIN(date)`, grouping |
+    CUSTOMERS {
+        VARCHAR customer_id PK "Per-order unique token"
+        VARCHAR customer_unique_id "Permanent human buyer ID"
+        VARCHAR customer_city "Customer City"
+        VARCHAR customer_state "State abbreviation"
+    }
 
----
+    ORDERS {
+        VARCHAR order_id PK "Unique order identifier"
+        VARCHAR customer_id FK "References CUSTOMERS"
+        VARCHAR order_status "delivered, shipped, canceled, etc."
+        TIMESTAMP order_purchase_timestamp "Purchase datetime"
+        TIMESTAMP order_delivered_customer_date "Actual delivery datetime"
+        TIMESTAMP order_estimated_delivery_date "Promised delivery date"
+    }
 
-## Detailed Findings & Strategic Recommendations
+    ORDER_ITEMS {
+        VARCHAR order_id PK,FK "References ORDERS"
+        INTEGER order_item_id PK "Line-item index per order"
+        VARCHAR product_id FK "References PRODUCTS"
+        VARCHAR seller_id FK "References SELLERS"
+        TIMESTAMP shipping_limit_date "Seller dispatch deadline"
+        DECIMAL price "Item sales price"
+        DECIMAL freight_value "Item shipping cost"
+    }
 
-### 1. Operations & Logistics
-* **Observation:** Orders shipped to distant northern/northeastern states experience fulfillment windows twice as long as São Paulo and Rio de Janeiro. Late orders consistently receive 1-star and 2-star reviews criticizing transit clarity.
-* **Recommendation:** Implement localized fulfillment micro-hubs or partner with regional third-party logistics (3PL) providers to narrow cross-country transit variance.
+    ORDER_PAYMENTS {
+        VARCHAR order_id FK "References ORDERS"
+        INTEGER payment_sequential "Split payment sequence"
+        VARCHAR payment_type "credit_card, boleto, voucher, debit"
+        INTEGER payment_installments "Installment count"
+        DECIMAL payment_value "Payment amount"
+    }
 
-### 2. Commercial Strategy & Unit Economics
-* **Observation:** Furniture, kitchen appliances, and automotive accessories carry disproportionately high freight ratios (>35%), leading to higher cart abandonment and sensitivity to delivery estimates.
-* **Recommendation:** Introduce freight subsidy tiers (e.g., free shipping over R$150) or explore flat-rate regional shipping caps subsidized by merchant margin sharing.
+    ORDER_REVIEWS {
+        VARCHAR review_id PK "Unique review identifier"
+        VARCHAR order_id FK "References ORDERS"
+        INTEGER review_score "Rating score (1 to 5)"
+        TIMESTAMP review_creation_date "Survey sent date"
+        TIMESTAMP review_answer_timestamp "Survey completed date"
+    }
 
-### 3. Customer Retention & Growth
-* **Observation:** Over 97% of unique buyers never return. Because marketing expenditure is exhausted entirely on new customer acquisition, lifetime value remains low.
-* **Recommendation:** Launch automated transactional email flows targeted at 30, 60, and 90 days post-delivery, offering cross-category incentives aligned with the initial purchase category.
+    PRODUCTS {
+        VARCHAR product_id PK "Unique product token"
+        VARCHAR product_category_name FK "Portuguese category slug"
+        INTEGER product_photos_qty "Image asset count"
+        DECIMAL product_weight_g "Weight in grams"
+        DECIMAL product_length_cm "Package length"
+        DECIMAL product_height_cm "Package height"
+        DECIMAL product_width_cm "Package width"
+    }
 
----
+    SELLERS {
+        VARCHAR seller_id PK "Unique merchant token"
+        VARCHAR seller_city "Merchant city"
+        VARCHAR seller_state "Merchant state"
+    }
 
-## Tools & Environment
-
-* **Database Engine:** SQLite 3
-* **Interface & Execution:** DB Browser for SQLite / SQLite Studio
-* **Dataset:** [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+    PRODUCT_CATEGORY_TRANSLATION {
+        VARCHAR product_category_name PK "Portuguese category slug"
+        VARCHAR product_category_name_english "English translation"
+    }
