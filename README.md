@@ -160,3 +160,12 @@ All SQL scripts are stored in the [`sql_queries/`](sql_queries/) folder.
 * **Interface & Execution:** DB Browser for SQLite
 * **Modeling & Documentation:** GitHub Markdown, Mermaid.js
 * **Dataset Source:** [Olist Public E-Commerce Repository](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+
+## 👨‍💻 Author & Contact
+
+**[SHARINI G]**  
+*Entry-Level Data Analyst*  
+
+- **LinkedIn:** [Your LinkedIn Profile URL](www.linkedin.com/in/sharini-g-571546382)
+- **Email:** [your.email@example.com](g.sharini1601@gmail.com)  
+- **GitHub:** [Your GitHub Profile URL](https://github.com/sharini16173) 
