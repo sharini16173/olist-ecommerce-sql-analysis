@@ -1,8 +1,8 @@
 # Brazilian E-Commerce (Olist) Marketplace & Customer Behavior Analysis
 
-[![SQL-SQLite](https://img.shields.io/badge/Dialect-SQLite-blue.svg)](https://www.sqlite.org/)
-[![Dataset-Olist](https://img.shields.io/badge/Dataset-Kaggle_Olist-green.svg)](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
-[![Queries-15](https://img.shields.io/badge/Business_Queries-15_Intermediate/Advanced-orange.svg)](#query-catalog--technical-breakdown)
+# Brazilian E-Commerce (Olist) Marketplace & Customer Behavior Analysis
+
+**Dialect:** SQLite | **Dataset:** Brazilian E-Commerce Public Dataset by Olist (100k+ orders) | **Scope:** 15 Business SQL Queries
 
 An intermediate-to-advanced relational database analysis investigating commercial performance, customer lifetime behavior, logistics bottlenecks, and merchant tiering across 100,000+ real-world Brazilian e-commerce transactions from 2016 to 2018.
 
