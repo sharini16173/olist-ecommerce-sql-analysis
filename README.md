@@ -14,79 +14,78 @@ An end-to-end relational database project analyzing 100,000+ Brazilian e-commerc
 
 ---
 
-## Entity-Relationship (ER) Diagram & Data Architecture
+## Entity-Relationship (ER) Diagram
 
-```mermaid
 erDiagram
-    CUSTOMERS ||--o{ ORDERS : "places (1:N via customer_id)"
-    ORDERS ||--o{ ORDER_PAYMENTS : "split into (1:N via order_id)"
-    ORDERS ||--o{ ORDER_REVIEWS : "evaluated by (1:N via order_id)"
-    ORDERS ||--|{ ORDER_ITEMS : "contains (1:N via order_id)"
-    SELLERS ||--o{ ORDER_ITEMS : "fulfills (1:N via seller_id)"
-    PRODUCTS ||--o{ ORDER_ITEMS : "ordered as (1:N via product_id)"
-    PRODUCT_CATEGORY_TRANSLATION ||--o{ PRODUCTS : "translates (1:N via category_name)"
+    CUSTOMERS ||--o{ ORDERS : "places (customer_id)"
+    ORDERS ||--o{ ORDER_PAYMENTS : "paid via (order_id)"
+    ORDERS ||--o{ ORDER_REVIEWS : "reviewed in (order_id)"
+    ORDERS ||--|{ ORDER_ITEMS : "contains (order_id)"
+    SELLERS ||--o{ ORDER_ITEMS : "fulfills (seller_id)"
+    PRODUCTS ||--o{ ORDER_ITEMS : "ordered as (product_id)"
+    PRODUCT_CATEGORY_TRANSLATION ||--o{ PRODUCTS : "translates (category_name)"
 
     CUSTOMERS {
-        VARCHAR customer_id PK "Per-order unique token"
-        VARCHAR customer_unique_id "Permanent human buyer ID"
-        VARCHAR customer_city "Customer City"
-        VARCHAR customer_state "State abbreviation"
+        string customer_id PK
+        string customer_unique_id
+        string customer_city
+        string customer_state
     }
 
     ORDERS {
-        VARCHAR order_id PK "Unique order identifier"
-        VARCHAR customer_id FK "References CUSTOMERS"
-        VARCHAR order_status "delivered, shipped, canceled, etc."
-        TIMESTAMP order_purchase_timestamp "Purchase datetime"
-        TIMESTAMP order_delivered_customer_date "Actual delivery datetime"
-        TIMESTAMP order_estimated_delivery_date "Promised delivery date"
+        string order_id PK
+        string customer_id FK
+        string order_status
+        datetime order_purchase_timestamp
+        datetime order_delivered_customer_date
+        datetime order_estimated_delivery_date
     }
 
     ORDER_ITEMS {
-        VARCHAR order_id PK,FK "References ORDERS"
-        INTEGER order_item_id PK "Line-item index per order"
-        VARCHAR product_id FK "References PRODUCTS"
-        VARCHAR seller_id FK "References SELLERS"
-        TIMESTAMP shipping_limit_date "Seller dispatch deadline"
-        DECIMAL price "Item sales price"
-        DECIMAL freight_value "Item shipping cost"
+        string order_id PK,FK
+        int order_item_id PK
+        string product_id FK
+        string seller_id FK
+        datetime shipping_limit_date
+        float price
+        float freight_value
     }
 
     ORDER_PAYMENTS {
-        VARCHAR order_id FK "References ORDERS"
-        INTEGER payment_sequential "Split payment sequence"
-        VARCHAR payment_type "credit_card, boleto, voucher, debit"
-        INTEGER payment_installments "Installment count"
-        DECIMAL payment_value "Payment amount"
+        string order_id FK
+        int payment_sequential
+        string payment_type
+        int payment_installments
+        float payment_value
     }
 
     ORDER_REVIEWS {
-        VARCHAR review_id PK "Unique review identifier"
-        VARCHAR order_id FK "References ORDERS"
-        INTEGER review_score "Rating score (1 to 5)"
-        TIMESTAMP review_creation_date "Survey sent date"
-        TIMESTAMP review_answer_timestamp "Survey completed date"
+        string review_id PK
+        string order_id FK
+        int review_score
+        datetime review_creation_date
+        datetime review_answer_timestamp
     }
 
     PRODUCTS {
-        VARCHAR product_id PK "Unique product token"
-        VARCHAR product_category_name FK "Portuguese category slug"
-        INTEGER product_photos_qty "Image asset count"
-        DECIMAL product_weight_g "Weight in grams"
-        DECIMAL product_length_cm "Package length"
-        DECIMAL product_height_cm "Package height"
-        DECIMAL product_width_cm "Package width"
+        string product_id PK
+        string product_category_name FK
+        int product_photos_qty
+        float product_weight_g
+        float product_length_cm
+        float product_height_cm
+        float product_width_cm
     }
 
     SELLERS {
-        VARCHAR seller_id PK "Unique merchant token"
-        VARCHAR seller_city "Merchant city"
-        VARCHAR seller_state "Merchant state"
+        string seller_id PK
+        string seller_city
+        string seller_state
     }
 
     PRODUCT_CATEGORY_TRANSLATION {
-        VARCHAR product_category_name PK "Portuguese category slug"
-        VARCHAR product_category_name_english "English translation"
+        string product_category_name PK
+        string product_category_name_english
     }
 
 ---
