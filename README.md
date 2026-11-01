@@ -10,11 +10,11 @@ An end-to-end relational database project analyzing 100,000+ Brazilian e-commerc
 
 * **Source:** [Kaggle — Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 * **Scope:** 100,000+ real anonymized commercial transactions processed between 2016 and 2018 across Brazilian states.
-* **Architecture:** 9 normalized relational tables covering customers, order cycles, line items, payments, reviews, products, sellers, geolocation, and category translations.
+* **Schema:** 9 normalized relational tables covering customers, order cycles, line items, payments, reviews, products, sellers, geolocation, and category translations.
 
 ---
 
-## Entity-Relationship (ER) Diagram & Data Architecture
+## Entity-Relationship (ER) Diagram
 
 ```mermaid
 erDiagram
